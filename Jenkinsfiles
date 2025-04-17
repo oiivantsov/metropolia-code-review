@@ -3,13 +3,17 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'  // The name of the SonarQube server configured in Jenkins
-        SONAR_TOKEN = 'sqa_54c4ceb0ea69276981c844021664899db708e60d' // Store the token securely
+        SONAR_TOKEN = 'sqp_0220891d1fa5ccfe46304451b90adebd085aea96' // Store the token securely
+
+        DOCKERHUB_CREDENTIALS_ID = '9efad190-93ff-4d56-8334-ea8e34564981'
+        DOCKERHUB_REPO = 'oleg1metropolia/hello-app'
+        DOCKER_IMAGE_TAG = 'latest_v1'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/ADirin/sep2_week5_inclass_s2.git'
+                git branch: 'master', url: 'https://github.com/oiivantsov/metropolia-code-review.git'
             }
         }
 
@@ -31,6 +35,26 @@ pipeline {
                         -Dsonar.login=${env.SONAR_TOKEN} ^
                         -Dsonar.java.binaries=target/classes
                     """
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                // Build Docker image
+                script {
+                    docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}", ".")
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                // Push Docker image to Docker Hub
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
+                        docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                    }
                 }
             }
         }
