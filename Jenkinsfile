@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'  // The name of the SonarQube server configured in Jenkins
-        SONAR_TOKEN = 'squ_db19cb094e543c7456e02065e53204f7d17cd96a' // Store the token securely
+        SONAR_TOKEN = credentials('SONAR_TOKEN_3') // Store the token securely
 
         DOCKERHUB_CREDENTIALS_ID = '9efad190-93ff-4d56-8334-ea8e34564981'
         DOCKERHUB_REPO = 'oleg1metropolia/hello-app'
@@ -22,13 +22,6 @@ pipeline {
                 bat 'mvn clean install'
             }
         }
-
-        stage('Debug ENV') {
-            steps {
-                bat 'set'
-            }
-        }
-
 
         stage('SonarQube Analysis') {
             steps {
