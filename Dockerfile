@@ -1,5 +1,4 @@
 FROM openjdk:21
-COPY ./src /usr/src/myapp
-WORKDIR /usr/src/myapp
-RUN javac App.java
-CMD ["java", "App"]
+WORKDIR /app
+COPY target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
