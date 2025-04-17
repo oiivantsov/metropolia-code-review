@@ -23,6 +23,13 @@ pipeline {
             }
         }
 
+        stage('Debug ENV') {
+            steps {
+                bat 'set'
+            }
+        }
+
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
